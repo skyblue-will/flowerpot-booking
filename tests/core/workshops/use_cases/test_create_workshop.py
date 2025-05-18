@@ -17,14 +17,14 @@ class MockUnitOfWork(UnitOfWork):
     Mock UnitOfWork for testing the CreateWorkshop use case.
     """
     def __init__(self, should_fail=False):
-        self.workshops = Mock()
-        self.workshops.save = Mock()
-        self.bookings = Mock()
-        self.guardians = Mock()
+        self._workshops = Mock()
+        self._workshops.save = Mock()
+        self._bookings = Mock()
+        self._guardians = Mock()
         
         # Configure workshop repository mock
         if should_fail:
-            self.workshops.save.side_effect = Exception("Mock repository failure")
+            self._workshops.save.side_effect = Exception("Mock repository failure")
         else:
             def save_side_effect(workshop):
                 workshop_copy = WorkshopEntity(
@@ -40,13 +40,25 @@ class MockUnitOfWork(UnitOfWork):
                 )
                 return workshop_copy
             
-            self.workshops.save.side_effect = save_side_effect
+            self._workshops.save.side_effect = save_side_effect
         
         # Transaction tracking
         self.commit_called = False
         self.rollback_called = False
         self.entered = False
         self.exited = False
+    
+    @property
+    def workshops(self):
+        return self._workshops
+    
+    @property
+    def bookings(self):
+        return self._bookings
+    
+    @property
+    def guardians(self):
+        return self._guardians
     
     def __enter__(self):
         self.entered = True
