@@ -3,6 +3,7 @@ from datetime import date, time
 from typing import Optional
 
 from core.workshops.WorkshopEntity import WorkshopEntity
+from core.unit_of_work import UnitOfWork
 
 
 @dataclass
@@ -37,15 +38,15 @@ class CreateWorkshopUseCase:
     and orchestrate the business rules specific to a particular use case.
     """
     
-    def __init__(self, workshop_repository):
+    def __init__(self, unit_of_work: UnitOfWork):
         """
-        Initialize the use case with a repository dependency.
-        The repository is passed in as a dependency, following Dependency Inversion Principle.
+        Initialize the use case with a UnitOfWork dependency.
+        The UnitOfWork is passed in as a dependency, following Dependency Inversion Principle.
         
         Args:
-            workshop_repository: An object that implements methods to persist workshops
+            unit_of_work: An object that implements UnitOfWork interface to manage transactions
         """
-        self.workshop_repository = workshop_repository
+        self.unit_of_work = unit_of_work
     
     def execute(self, input_dto: CreateWorkshopInputDTO) -> CreateWorkshopOutputDTO:
         """
@@ -77,16 +78,21 @@ class CreateWorkshopUseCase:
             current_children=0   # New workshop starts with 0 children
         )
         
-        # Use the repository to save the workshop
+        # Use the UnitOfWork to manage the transaction
         try:
-            saved_workshop = self.workshop_repository.save(workshop)
-            
-            # Return success response
-            return CreateWorkshopOutputDTO(
-                success=True,
-                workshop_id=saved_workshop.id
-            )
+            with self.unit_of_work:
+                # Save the workshop using the repository from the UnitOfWork
+                saved_workshop = self.unit_of_work.workshops.save(workshop)
+                # Commit the transaction
+                self.unit_of_work.commit()
+                
+                # Return success response
+                return CreateWorkshopOutputDTO(
+                    success=True,
+                    workshop_id=saved_workshop.id
+                )
         except Exception as e:
+            # Transaction is automatically rolled back by UnitOfWork.__exit__
             # Return failure response
             return CreateWorkshopOutputDTO(
                 success=False,

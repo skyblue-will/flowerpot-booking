@@ -1,1 +1,12 @@
- 
+version: '3'
+
+services:
+  core:
+    build:
+      context: ..
+      dockerfile: docker/core/Dockerfile
+    volumes:
+      - ../core:/app/core
+    environment:
+      - PYTHONPATH=/app
+    image: flowerpot-core:latest 
