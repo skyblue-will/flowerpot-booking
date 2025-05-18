@@ -1,18 +1,23 @@
-Please implement the "[Use Case Name]" use case following Clean Architecture principles:
+Please implement the "{USE_CASE_NAME}" use case following Clean Architecture principles:
 
-1. The use case should:
-   - [List key requirements/behaviors the use case should implement]
-   - Handle the following scenarios: [list specific scenarios]
-   - Follow Uncle Bob's Clean Architecture with isolated core domain
+1. The use case should implement these requirements:
+   {USE_CASE_REQUIREMENTS}
 
 2. Create these files:
-   - core/[domain]/use_cases/[UseCaseName].py
-   - tests/core/[domain]/use_cases/test_[use_case_name].py
+   - core/{DOMAIN}/use_cases/{USE_CASE_CLASS}.py
+   - tests/core/{DOMAIN}/use_cases/test_{USE_CASE_FILE}.py
 
 3. The files should include:
    - Proper DTOs for input/output
-   - Repository interface following Dependency Inversion Principle
+   - UnitOfWork pattern for transaction management
    - Comprehensive unit tests covering success and failure scenarios
    - No dependencies on external frameworks
+
+4. Follow these architectural principles:
+   - Pure domain entities with no external dependencies
+   - Use cases that orchestrate the business rules
+   - Clear input/output boundaries with DTOs
+   - Dependency Inversion for repositories and external services
+   - Transaction boundaries with UnitOfWork pattern
 
 Once complete, stop without further suggestions or implementation.

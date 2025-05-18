@@ -19,7 +19,7 @@ class BookingEntity:
     It has no dependencies on frameworks, UI, database, or other external systems.
     """
     
-    def __init__(self, id=None, workshop_id=None, guardian_id=None, children=None):
+    def __init__(self, id=None, workshop_id=None, guardian_id=None, children=None, status="active", cancellation_reason=None):
         """
         Initialize a new Booking entity
         """
@@ -27,6 +27,8 @@ class BookingEntity:
         self.workshop_id = workshop_id
         self.guardian_id = guardian_id
         self.children = children or []  # List of Child objects
+        self.status = status  # active, cancelled
+        self.cancellation_reason = cancellation_reason
     
     def add_child(self, name, age):
         """
@@ -72,3 +74,22 @@ class BookingEntity:
         Update the guardian ID for this booking
         """
         self.guardian_id = guardian_id
+        
+    def mark_as_cancelled(self, reason=None):
+        """
+        Mark this booking as cancelled
+        """
+        self.status = "cancelled"
+        self.cancellation_reason = reason
+        
+    def is_cancelled(self):
+        """
+        Check if this booking is cancelled
+        """
+        return self.status == "cancelled"
+        
+    def is_active(self):
+        """
+        Check if this booking is active
+        """
+        return self.status == "active"
